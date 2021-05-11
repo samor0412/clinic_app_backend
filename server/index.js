@@ -11,7 +11,8 @@ const {
 } = require('./database/controllers');
 const { auth } = require('./database/models');
 const { _generateAccessToken, _verifyAccessToken } = require('./database/utils');
-const ERROR_MESSAGES = require('./errorMessages');
+const ERROR_TO_MESSAGES = require('./errorToMessages');
+const { ERROR_MESSAGES } = require('./constants');
 
 app.use(bodyParser.json()) // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
@@ -51,7 +52,7 @@ app.post('/create-user', ...EXPRESS_VALIDATOR.CREATE_USER, async function (req, 
     })
   } catch (e) {
     console.log(e)
-    res.json(ERROR_MESSAGES.createUserErrorMessage(e))
+    res.json(ERROR_TO_MESSAGES.createUserErrorMessage(e))
   }
 })
 
@@ -81,7 +82,7 @@ app.get('/login', ...EXPRESS_VALIDATOR.LOGIN, async function (req, res) {
     })
   } catch (e) {
     console.log(e)
-    res.json(ERROR_MESSAGES.loginErrorMessage(e))
+    res.json(ERROR_TO_MESSAGES.loginErrorMessage(e))
   }
 })
 
@@ -91,7 +92,7 @@ app.post('/create-consultation', ...EXPRESS_VALIDATOR.CREATE_CONSULTATION, async
     const authData = await _verifyAccessToken(req.body.access_token)
     const clinic_id = authData.clinic && authData.clinic.id;
     if (!clinic_id) {
-      throw 'invalid access token';
+      throw ERROR_MESSAGES.INVALID_ACCESS_TOKEN;
     }
 
     const result = await Consultant_Record.create({
@@ -108,7 +109,7 @@ app.post('/create-consultation', ...EXPRESS_VALIDATOR.CREATE_CONSULTATION, async
     res.json(result)
   } catch (e) {
     console.log(e)
-    res.json(ERROR_MESSAGES.createConsultantRecordErrorMessage(e))
+    res.json(ERROR_TO_MESSAGES.createConsultantRecordErrorMessage(e))
   }
 })
 
@@ -119,7 +120,7 @@ app.get('/consultation', ...EXPRESS_VALIDATOR.CONSULTATION, async function (req,
     const authData = await _verifyAccessToken(req.body.access_token)
     const clinic_id = authData.clinic && authData.clinic.id;
     if (!clinic_id) {
-      throw 'invalid access token';
+      throw ERROR_MESSAGES.INVALID_ACCESS_TOKEN;
     }
 
     const result = await Consultant_Record.findByClinicIdAndConsultantRecordId({
@@ -130,7 +131,7 @@ app.get('/consultation', ...EXPRESS_VALIDATOR.CONSULTATION, async function (req,
     res.json(result);
   } catch (e) {
     console.log(e)
-    res.json(ERROR_MESSAGES.getConsultantRecordErrorMessage(e))
+    res.json(ERROR_TO_MESSAGES.getConsultantRecordErrorMessage(e))
   }
 })
 
@@ -140,7 +141,7 @@ app.get('/consultations', ...EXPRESS_VALIDATOR.CONSULTATIONS, async function (re
     const authData = await _verifyAccessToken(req.body.access_token)
     const clinic_id = authData.clinic && authData.clinic.id;
     if (!clinic_id) {
-      throw 'invalid access token';
+      throw ERROR_MESSAGES.INVALID_ACCESS_TOKEN;
     }
 
     const result = await Consultant_Record.findAll({
@@ -157,7 +158,7 @@ app.get('/consultations', ...EXPRESS_VALIDATOR.CONSULTATIONS, async function (re
     res.json(result);
   } catch (e) {
     console.log(e)
-    res.json(ERROR_MESSAGES.getConsultantRecordsErrorMessage(e))
+    res.json(ERROR_TO_MESSAGES.getConsultantRecordsErrorMessage(e))
   }
 })
 

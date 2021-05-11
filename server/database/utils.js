@@ -1,5 +1,6 @@
 var jwt = require('jsonwebtoken');
 const fs = require('fs');
+const { ERROR_MESSAGES } = require('../constants');
 function _parseBoolean(data) {
   if (data === 'true' || data === true) {
     return true
@@ -30,7 +31,7 @@ async function _verifyAccessToken(token) {
     var privateKey = fs.readFileSync('public.key');
     jwt.verify(token, privateKey, function(err, decoded) {
       if (err) {
-        reject(err);
+        reject(ERROR_MESSAGES.INVALID_ACCESS_TOKEN);
       } else {
         resolve(decoded)
       }
